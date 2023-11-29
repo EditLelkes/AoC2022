@@ -1,3 +1,7 @@
+from typing import List
+from pathlib import Path
+
+
 def count_visible_trees(tree_height, list_of_tree_heights):
     count = 0
     for height in list_of_tree_heights:
@@ -8,17 +12,27 @@ def count_visible_trees(tree_height, list_of_tree_heights):
 
 
 class Forest:
-    def __init__(self):
-        self.trees = []
+    def __init__(self, trees: List[List["Tree"]]):
+        self.trees = trees
 
-    def add_row_of_trees(self, row_of_numbers, is_first_or_last_row):
-        row_of_trees = []
-        for i in range(len(row_of_numbers)):
-            tree = Tree(row_of_numbers[i])
-            if is_first_or_last_row or i == 0 or i == len(row_of_numbers) - 1:
+    @classmethod
+    def read_trees_from_line(cls, line: str, is_first_or_last_line: bool) -> List["Tree"]:
+        row_of_trees: List[Tree] = []
+        for i in range(len(line)):
+            tree = Tree(line[i])
+            if is_first_or_last_line or i == 0 or i == len(line) - 1:
                 tree.is_visible = True
             row_of_trees.append(tree)
-        self.trees.append(row_of_trees)
+        return row_of_trees
+
+    @classmethod
+    def read_from_file(cls, file: Path) -> "Forest":
+        trees: List[List["Tree"]] = list()
+        with file.open("r") as f:
+            lines = f.readlines()
+            for i in range(len(lines)):
+                trees.append(cls.read_trees_from_line(lines[i].strip(), i == 0 or i == len(lines) - 1))
+        return Forest(trees)
 
     def get_tree_data(self):
         for i in range(len(self.trees)):
@@ -66,15 +80,7 @@ class Tree:
 
 
 def get_visibilities(file_name):
-    forest = Forest()
-    with open(file_name) as file:
-        lines = file.readlines()
-        for i in range(len(lines)):
-            if i == 0 or i == len(lines) - 1:
-                forest.add_row_of_trees(lines[i].strip(), True)
-            else:
-                forest.add_row_of_trees(lines[i].strip(), False)
-
+    forest = Forest.read_from_file(Path(file_name))
     forest.visibility_count()
     forest.visible_trees_count()
 

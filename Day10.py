@@ -8,7 +8,7 @@ def day10_1(file_name):
                     sum_of_signals += (cycle * x)
                 try:
                     x += int(item)
-                except:
+                except ValueError:
                     pass
 
     print(sum_of_signals)

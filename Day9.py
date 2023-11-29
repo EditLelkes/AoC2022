@@ -32,10 +32,10 @@ class SnakePart:
 class Snake:
     def __init__(self, number_of_parts):
         self.number_of_parts = number_of_parts
-        self.body = [SnakePart() for i in range(number_of_parts)]
+        self.body = number_of_parts * [SnakePart()]
 
     def move(self, instructions):
-        for i in range(int(instructions[1])):
+        for j in range(int(instructions[1])):
             self.body[0].move_head(instructions[0])
             for i in range(1, self.number_of_parts):
                 self.body[i].move_tail(self.body[i - 1].coord)
